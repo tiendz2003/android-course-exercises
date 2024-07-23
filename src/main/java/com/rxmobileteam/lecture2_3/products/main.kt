@@ -104,56 +104,55 @@ private val orderList = listOf(
 fun main() {
   //region sortedByPriceAscendingThenByFavoriteCountDescending
   println("sortedByPriceAscendingThenByFavoriteCountDescending")
-  println(productList.sortedByPriceAscendingThenByFavoriteCountDescending())
+  val sortedProducts = productList.sortedByPriceAscendingThenByFavoriteCountDescending()
+  sortedProducts.forEach { println(it) }
   println("-".repeat(80))
   //endregion
-
   //region getProductsSet
   println("getProductsSet")
   println(orderList.getProductsSet())
   println("-".repeat(80))
   //endregion
-
   //region getProductsList
   println("getProductsList")
   println(orderList.getProductsList())
   println("-".repeat(80))
   //endregion
-
   //region getDeliveredOrders
   println("getDeliveredOrders")
-  println(orderList.getDeliveredOrders())
+  val deliveredOrders = orderList.getDeliveredOrders()
+  deliveredOrders.forEach { println(it) }
   println("-".repeat(80))
-  //endregion getDeliveredProductsList
-
   //region getDeliveredProductsList
   println("getDeliveredProductsList")
   println(orderList.getDeliveredProductsList())
   println("-".repeat(80))
   //endregion
-
   //region partitionDeliveredAndNotDelivered
   println("partitionDeliveredAndNotDelivered")
-  println(orderList.partitionDeliveredAndNotDelivered())
+  val (delivered, notDelivered) = orderList.partitionDeliveredAndNotDelivered()
+  println("Delivered orders: $delivered")
+  println("Not delivered orders: $notDelivered")
   println("-".repeat(80))
   //endregion
-
   //region countOfEachProduct
   println("countOfEachProduct")
   println(orderList.countOfEachProduct())
   println("-".repeat(80))
   //endregion
-
   //region sumProductPrice
   println("sumProductPrice")
   println(orderList[0].sumProductPrice())
   println("-".repeat(80))
   //endregion
-
   //region getMaxPriceProduct, getMinPriceProduct
   println("getMaxPriceProduct, getMinPriceProduct")
   println(orderList[0].getMaxPriceProduct())
   println(orderList[0].getMinPriceProduct())
   println("-".repeat(80))
   //endregion
+  val totalCount = orderList.getSumUniqueProductinOrder()
+  println(totalCount) // Expected output: 3
+  val sortedOrders = orderList.sortByTotalPriceDescending()
+  sortedOrders.forEach { println("Order(id=${it.id}, total=${it.products.sumOf { product -> product.price }})") }
 }

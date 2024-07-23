@@ -1,172 +1,187 @@
 package com.rxmobileteam.lecture2_3.fraction
 
-import com.rxmobileteam.utils.ExerciseNotCompletedException
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class Fraction private constructor(
-  val numerator: Int,
-  val denominator: Int,
-) : Comparable<Fraction> {
-  // TODO: Implement the decimal value of the fraction
-  val decimal: Double = throw ExerciseNotCompletedException()
-
+  val tuSo:Int,
+  val mauSo:Int
+):Comparable<Fraction>{
+  private val decimal = tuSo.toDouble()/mauSo
+  override fun compareTo(other: Fraction): Int {
+    return decimal.compareTo(other.decimal)
+  }
   init {
     // TODO: Check validity of numerator and denominator (throw an exception if invalid)
-    throw ExerciseNotCompletedException()
+    //Mẫu số != 0
+    require(mauSo!= 0){ println("Mẫu số phải khác 0")}
   }
-
   //region unary operators
   // TODO: "+fraction" operator
-  operator fun unaryPlus(): Fraction = throw ExerciseNotCompletedException()
-
-  // TODO: "-fraction" operator
-  operator fun unaryMinus(): Fraction = throw ExerciseNotCompletedException()
-  //endregion
-
-  //region plus operators
+  operator fun unaryPlus(): Fraction = this
+  operator fun unaryMinus(): Fraction = Fraction(-tuSo,mauSo)
   // TODO: "fraction+fraction" operator
-  operator fun plus(other: Fraction): Fraction = throw ExerciseNotCompletedException()
-
-  // TODO: "fraction+number" operator
-  operator fun plus(other: Int): Fraction = throw ExerciseNotCompletedException()
-  //endregion
-
-  //region times operators
-  // TODO: "fraction*fraction" operator
-  operator fun times(other: Fraction): Fraction = throw ExerciseNotCompletedException()
-
-  // TODO: "fraction*number" operator
-  operator fun times(number: Int): Fraction = throw ExerciseNotCompletedException()
-  //endregion
-
-  // TODO: Compare two fractions
-  override fun compareTo(other: Fraction): Int = throw ExerciseNotCompletedException()
-
-  //region toString, hashCode, equals, copy
-  // TODO: Format the fraction as a string (e.g. "1/2")
-  override fun toString(): String = throw ExerciseNotCompletedException()
-
-  // TODO: Implement hashCode
-  override fun hashCode(): Int = throw ExerciseNotCompletedException()
-
-  // TODO: Implement equals
-  override fun equals(other: Any?): Boolean = throw ExerciseNotCompletedException()
-
+  operator fun plus(other: Fraction):Fraction {
+    val mausoChung = mauSo*(other.mauSo)
+    val tusoMoi = tuSo*other.mauSo+other.tuSo*mauSo
+    return Fraction.of(tusoMoi,mausoChung)
+  }
+  operator fun plus(other:Int):Fraction {
+    return Fraction(tuSo+other*mauSo,mauSo)
+  }
+  operator fun times(other:Fraction):Fraction{
+    val mausoMoi = mauSo*other.mauSo
+    val tusoMoi = tuSo*other.tuSo
+    return Fraction.of(tusoMoi,mausoMoi)
+  }
+  operator fun times(other:Int):Fraction {
+    return Fraction(tuSo*other*tuSo,mauSo)
+  }
+  operator fun div(other:Fraction) :Fraction{
+    val tusoMoi = tuSo* other.mauSo
+    val mausoMoi =mauSo*other.tuSo
+    return Fraction(tusoMoi,mausoMoi)
+  }
+  operator fun div(other:Int):Fraction {
+    return Fraction(tuSo,mauSo*other)
+  }
   // TODO: Implement copy
   fun copy(
-    numerator: Int = this.numerator,
-    denominator: Int = this.denominator
-  ): Fraction = throw ExerciseNotCompletedException()
+    numerator: Int = this.tuSo,
+    denominator: Int = this.mauSo
+  ): Fraction = Fraction(numerator,denominator)
   //endregion
-
   companion object {
     @JvmStatic
     fun ofInt(number: Int): Fraction {
-      // TODO: Returns a fraction from an integer number
-      throw ExerciseNotCompletedException()
+      return Fraction(number, 1)
+
     }
 
     @JvmStatic
-    fun of(numerator: Int, denominator: Int): Fraction {
+    fun of(tuSo: Int, mauSo: Int): Fraction {
       // TODO: Check validity of numerator and denominator
       // TODO: Simplify fraction using the greatest common divisor
       // TODO: Finally, return the fraction with the correct values
-      throw ExerciseNotCompletedException()
+      require(mauSo != 0)
+      val ucln = timUCLN(tuSo,mauSo)
+      return Fraction(tuSo/ucln,mauSo/ucln)
+    }
+    private fun timUCLN(a:Int,b:Int):Int{
+      var num1 =a
+      var num2 =b
+      while (num2 !=0){
+        val temp = num2
+        num2 =num1 % num2
+        num1 = temp
+      }
+      return num1
     }
   }
-}
+  override fun toString(): String {
+    return "$tuSo/$mauSo"
+  }
 
-// TODO: return a Fraction representing "this/denominator"
-infix fun Int.over(denominator: Int): Fraction = throw ExerciseNotCompletedException()
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
 
-//region get extensions
+    other as Fraction
+
+    if (tuSo != other.tuSo) return false
+    if (mauSo != other.mauSo) return false
+    if (decimal != other.decimal) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = tuSo
+    result = 31 * result + mauSo
+    result = 31 * result + decimal.hashCode()
+    return result
+  }
+  // TODO: return a Fraction representing "this/denominator"
+  infix fun Int.over(mauSo: Int): Fraction =
+    Fraction.of(this,mauSo)
+  //region get extensions
 // TODO: get the numerator, eg. "val (numerator) = Fraction.of(1, 2)"
-operator fun Fraction.component1(): Int = throw ExerciseNotCompletedException()
+  operator fun component1(): Int = tuSo
 
-// TODO: get the denominator, eg. "val (_, denominator) = Fraction.of(1, 2)"
-operator fun Fraction.component2(): Int = throw ExerciseNotCompletedException()
+  // TODO: get the denominator, eg. "val (_, denominator) = Fraction.of(1, 2)"
+  operator fun component2(): Int = mauSo
 
-// TODO: get the decimal, index must be 0 or 1
+  // TODO: get the decimal, index must be 0 or 1
 // TODO: eg. "val numerator = Fraction.of(1, 2)[0]"
 // TODO: eg. "val denominator = Fraction.of(1, 2)[1]"
 // TODO: eg. "val denominator = Fraction.of(1, 2)[2]" should throw an exception
-operator fun Fraction.get(index: Int): Int = throw ExerciseNotCompletedException()
+  operator fun get(index: Int): Int = when(index){
+    0-> tuSo
+    1->mauSo
+    else -> throw IndexOutOfBoundsException("Chỉ số $index không hợp lệ")
+
+  }
+  //region các hàm chuyển đổi số
+  fun roundToInt(): Int = decimal.roundToInt()
+
+  fun roundToLong(): Long = decimal.roundToLong()
+
+  fun toFloat(): Float = decimal.toFloat()
+
+  fun toDouble(): Double = decimal
+
+
 //endregion
 
-//region to number extensions
-// TODO: round to the nearest integer
-fun Fraction.roundToInt(): Int = throw ExerciseNotCompletedException()
+}
 
-// TODO: round to the nearest long
-fun Fraction.roundToLong(): Long = throw ExerciseNotCompletedException()
-
-// TODO: return the decimal value as a float
-fun Fraction.toFloat(): Float = throw ExerciseNotCompletedException()
-
-// TODO: return the decimal value as a double
-fun Fraction.toDouble(): Double = throw ExerciseNotCompletedException()
-//endregion
 
 fun main() {
-  // Creation
-  println("1/2: ${Fraction.of(1, 2)}")
-  println("2/3: ${Fraction.of(2, 3)}")
-  println("8: ${Fraction.ofInt(8)}")
-  println("2/4: ${2 over 4}")
-  println("-".repeat(80))
-
-  // Unary operators
-  println("+2/4: ${+Fraction.of(2, 4)}")
-  println("-2/6: ${-Fraction.of(2, 6)}")
-  println("-".repeat(80))
-
   // Plus operators
   println("1/2 + 2/3: ${Fraction.of(1, 2) + Fraction.of(2, 3)}")
   println("1/2 + 1: ${Fraction.of(1, 2) + 1}")
   println("-".repeat(80))
-
-  // Times operators
+  // times operators
   println("1/2 * 2/3: ${Fraction.of(1, 2) * Fraction.of(2, 3)}")
-  println("1/2 * 2: ${Fraction.of(1, 2) * 2}")
+  println("1/2 * 1: ${Fraction.of(1, 2) * 1}")
   println("-".repeat(80))
-
-  // compareTo
+  // div operators
+  println("1/2 : 2/3: ${Fraction.of(1, 2) / Fraction.of(2, 3)}")
+  println("1/2 : 2: ${Fraction.of(1, 2) / 2}")
+  println("-".repeat(80))
+  // So sánh
   println("3/2 > 2/2: ${Fraction.of(3, 2) > Fraction.of(2, 2)}")
   println("1/2 <= 2/4: ${Fraction.of(1, 2) <= Fraction.of(2, 4)}")
   println("4/6 >= 2/3: ${Fraction.of(4, 6) >= Fraction.of(2, 3)}")
   println("-".repeat(80))
-
   // hashCode
   println("hashCode 1/2 == 2/4: ${Fraction.of(1, 2).hashCode() == Fraction.of(2, 4).hashCode()}")
   println("hashCode 1/2 == 1/2: ${Fraction.of(1, 2).hashCode() == Fraction.of(1, 2).hashCode()}")
   println("hashCode 1/3 == 3/5: ${Fraction.of(1, 3).hashCode() == Fraction.of(3, 5).hashCode()}")
   println("-".repeat(80))
-
   // equals
   println("1/2 == 2/4: ${Fraction.of(1, 2) == Fraction.of(2, 4)}")
   println("1/2 == 1/2: ${Fraction.of(1, 2) == Fraction.of(1, 2)}")
   println("1/3 == 3/5: ${Fraction.of(1, 3) == Fraction.of(3, 5)}")
   println("-".repeat(80))
-
   // Copy
   println("Copy 1/2: ${Fraction.of(1, 2).copy()}")
-  println("Copy 1/2 with numerator 2: ${Fraction.of(1, 2).copy(numerator = 2)}")
-  println("Copy 1/2 with denominator 3: ${Fraction.of(1, 2).copy(denominator = 3)}")
-  println("Copy 1/2 with numerator 2 and denominator 3: ${Fraction.of(1, 2).copy(numerator = 2, denominator = 3)}")
+  println("Copy 1/2 với tử số 2: ${Fraction.of(1, 2).copy(numerator = 2)}")
+  println("Copy 1/2 với mẫu số 3: ${Fraction.of(1, 2).copy(denominator = 3)}")
+  println("Copy 1/2 với tử số 2 và mẫu số 3: ${Fraction.of(1, 2).copy(numerator = 2, denominator = 3)}")
   println("-".repeat(80))
-
-  // Component1, Component2 operators
-  val (numerator, denominator) = Fraction.of(1, 2)
-  println("Component1, Component2 of 1/2: $numerator, $denominator")
-  val (numerator2, _) = Fraction.of(10, 30)
-  println("Component1 of 10/30: $numerator2")
-  val (_, denominator2) = Fraction.of(10, 79)
-  println("Component2 of 10/79: $denominator2")
+  // Toán tử Component1, Component2
+  val (tuSo, mauSo) = Fraction.of(1, 2)
+  println("Component1, Component2 của 1/2: $tuSo, $mauSo")
+  val (tuSo2, _) = Fraction.of(10, 30)
+  println("Component1 của 10/30: $tuSo2")
+  val (_, mauSo2) = Fraction.of(10, 79)
+  println("Component2 của 10/79: $mauSo2")
   println("-".repeat(80))
-
-  // Get operator
-  println("Get 0 of 1/2: ${Fraction.of(1, 2)[0]}")
-  println("Get 1 of 1/2: ${Fraction.of(1, 2)[1]}")
-  println("Get 2 of 1/2: ${runCatching { Fraction.of(1, 2)[2] }}") // Should print "Failure(...)"
+  // Toán tử get
+  println("Get 0 của 1/2: ${Fraction.of(1, 2)[0]}")
+  println("Get 1 của 1/2: ${Fraction.of(1, 2)[1]}")
+  println("Get 2 của 1/2: ${runCatching { Fraction.of(1, 2)[2] }}") // Sẽ in "Failure(...)"
   println("-".repeat(80))
 
   // toInt, toLong, toFloat, toDouble
